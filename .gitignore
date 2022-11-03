@@ -131,3 +131,5 @@ dmypy.json
 
 # Added things
 *.jpg
+
+/results

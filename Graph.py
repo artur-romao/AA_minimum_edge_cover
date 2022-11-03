@@ -5,6 +5,7 @@ import random, string
 import networkx as nx
 import matplotlib.pyplot as plot
 
+random.seed(98470)
 class Graph:
     def __init__(self, n_vertices, prob):
         self.n_vertices = n_vertices # Number of vertices to generate
@@ -13,7 +14,6 @@ class Graph:
         self.connected_vertices = []
         self.edges = []
         self.letters = list(string.ascii_letters)
-        random.seed(98470)
 
     def gen_vertice(self):
         v = self.letters[len(self.vertices)], (random.randint(1, 20), random.randint(1, 20))
@@ -78,7 +78,7 @@ class Graph:
     def get_list_with_num_of_neighbours(self):
         return [len(neighbours) for neighbours in self.gen_adjacency_list()]
 
-    def gen_graph(self):
+    def gen_graph(self, search_type):
         [self.vertices.append(self.gen_vertice()) for _ in range(self.n_vertices)]
         n_edges = int(self.prob * self.n_vertices * (self.n_vertices - 1) / 2) # Num of Edges = prob * Max Num of Edges
         print(f"n_vertices: {self.n_vertices}, prob: {self.prob}, n_edges: {n_edges}")
@@ -86,11 +86,11 @@ class Graph:
             print("Generating graph...")
             [self.edges.append(self.gen_edge()) for _ in range(n_edges)]
             print("Graph generated!")
-            self.plot_graph()
+            self.plot_graph(search_type)
         else:
             print("Invalid number of edges")
 
-    def plot_graph(self):
+    def plot_graph(self, search_type):
         vertices = sorted([v[0] for v in self.connected_vertices])
         print(f"Vertices: {vertices}")
         G = nx.Graph()
@@ -99,10 +99,11 @@ class Graph:
             G.add_edge(edge[0], edge[1])
         nx.draw(G, with_labels=True)
         # print(nx.min_edge_cover(G))
-        plot.show()
+        plot.savefig("results/{}/{}_{}graph.png".format(search_type, self.n_vertices, self.prob))
+        plot.close()
 
 if __name__ == "__main__":
-    graph = Graph(10, 1)
+    graph = Graph(2, 0.75)
     for _ in range(graph.n_vertices):
         graph.vertices.append(graph.gen_vertice())
 
@@ -119,5 +120,4 @@ if __name__ == "__main__":
     print("\nIncidence Matrix:")
     [print(row) for row in graph.gen_incidence_matrix()]
 
-    print(graph.gen_incidence_matrix()[1][5])
-    graph.plot_graph()
+    graph.plot_graph("exhaustive")
